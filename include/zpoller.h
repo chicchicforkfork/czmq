@@ -78,6 +78,12 @@ CZMQ_EXPORT bool
 CZMQ_EXPORT void
     zpoller_test (bool verbose);
 
+CZMQ_EXPORT size_t
+    zpoller_size (zpoller_t *self);
+
+CZMQ_EXPORT int
+multi_zpoller_wait (zpoller_t *self, int timeout, zsock_t **events);
+
 //  @end
 
 

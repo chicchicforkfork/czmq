@@ -258,6 +258,48 @@ zpoller_wait (zpoller_t *self, int timeout)
 #endif
 }
 
+int
+multi_zpoller_wait (zpoller_t *self, int timeout, zsock_t **events)
+{
+    assert (self);
+    self->expired = false;
+    if (zsys_interrupted && !self->nonstop) {
+        self->terminated = true;
+        return 0;
+    }
+    else {
+        self->terminated = false;
+    }
+
+    if (self->need_rebuild)
+        s_rebuild_poll_set (self);
+    int rc = zmq_poll (self->poll_set, (int) self->poll_size, timeout * ZMQ_POLL_MSEC);
+    if (rc > 0) {
+        uint reader = 0;
+        uint i = 0;
+        for (reader = 0; reader < self->poll_size; reader++) {
+            if (self->poll_set [reader].revents & ZMQ_POLLIN) {
+                events[i++] = (zsock_t *)self->poll_readers [reader];
+            }
+        }
+        return i;
+    }
+    else
+    if (rc == -1 || (zsys_interrupted && !self->nonstop)) {
+        self->terminated = true;
+    } else
+    if (rc == 0) {
+        self->expired = true;
+    }
+
+    return 0;
+}
+
+size_t
+zpoller_size(zpoller_t *self) {
+    return self->poll_size;
+}
+
 
 //  --------------------------------------------------------------------------
 //  Return true if the last zpoller_wait () call ended because the timeout
