@@ -37,6 +37,12 @@ extern "C" {
 //  variant, enabling intelligent socket leak detection. This can have
 //  performance implications if you use a LOT of sockets. To turn off this
 //  redirection behaviour, define ZSOCK_NOCHECK.
+CZMQ_EXPORT void *
+    zsock_ctx (zsock_t *self);
+
+CZMQ_EXPORT void
+    zsock_new_ctx (zsock_t *self, void *ctx);
+
 CZMQ_EXPORT zsock_t *
     zsock_new (int type);
 

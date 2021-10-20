@@ -47,6 +47,8 @@ struct _zsock_t {
     int type;                   //  Socket type
     size_t cache_size;          //  Current size of cache
     uint32_t routing_id;        //  Routing ID for server sockets
+    // by chkchk
+    void *ctx;                  //  User Data
 };
 
 #ifndef CZMQ_BUILD_DRAFT_API
@@ -76,6 +78,16 @@ CZMQ_PRIVATE zsock_t *
 //  off this checking, which may be costly if you use a LOT of sockets,
 //  define ZSOCK_NOCHECK before compiling your code. Returns the new
 //  socket, or NULL if the new socket could not be created.
+
+void *
+zsock_ctx(zsock_t *self) {    
+    return self->ctx;
+}
+
+void 
+zsock_new_ctx(zsock_t *self, void *ctx) {
+    self->ctx = ctx;
+}
 
 zsock_t *
 zsock_new_checked (int type, const char *filename, size_t line_nbr)
