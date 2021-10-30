@@ -49,6 +49,7 @@ struct _zsock_t {
     uint32_t routing_id;        //  Routing ID for server sockets
     // by chkchk
     void *ctx;                  //  User Data
+    char name[32];              // zsocket name
 };
 
 #ifndef CZMQ_BUILD_DRAFT_API
@@ -78,6 +79,15 @@ CZMQ_PRIVATE zsock_t *
 //  off this checking, which may be costly if you use a LOT of sockets,
 //  define ZSOCK_NOCHECK before compiling your code. Returns the new
 //  socket, or NULL if the new socket could not be created.
+const char *
+zsock_name(zsock_t *self) {
+    return self->name;
+}
+
+void
+zsock_new_name(zsock_t *self, const char* name) {
+    snprintf(self->name, sizeof(self->name), "%s", name);
+}
 
 void *
 zsock_ctx(zsock_t *self) {    
